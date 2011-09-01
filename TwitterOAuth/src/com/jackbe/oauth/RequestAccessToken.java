@@ -31,16 +31,6 @@ public class RequestAccessToken {
 	static String consumerKey3 = "A8dFrSqGZ3P5liY4wb3Mww";
 	static String consumerSecret3 = "23FTldxYah2R4OdlmsXLzZLVaIs5NVC0wK7c68duo";
 
-	/*
-	 * public static void main(String args[]) thrwos Exception{ // The factory
-	 * instance is re-useable and thread safe. TwitterFactory factory = new
-	 * TwitterFactory(); AccessToken accessToken =
-	 * loadAccessToken(Integer.parseInt(args[0])); Twitter twitter =
-	 * factory.getOAuthAuthorizedInstance"[consumer key]", "[consumer secret]",
-	 * accessToken); Status status = twitter.updateStatus(args[1]);
-	 * System.out.println("Successfully updated the status to [" +
-	 * status.getText() + "]."); System.exit(0); }
-	 */
 
 	private static AccessToken loadAccessToken(String useId) throws Exception {
 		props.load(new FileInputStream(filename));
@@ -121,12 +111,15 @@ public class RequestAccessToken {
 			}
 
 			// For each user, update the status 350 times to ensure not limit not IP based.
-			for(int j = 0; j < 1; j++) {
+			for(int j = 1; j <= 1; j++) {
 				try {
 					//Status status = twitter.updateStatus("Testing " + System.currentTimeMillis());
 					//System.out.println("Successfully updated the status " + (j+1) + " times for user: JackBeIntel" + i);
 					ResponseList status = twitter.getUserTimeline("JackBeIntel" + i);
-					System.out.println("Status for user:" + status.toArray()[0]);
+					for(int k = 0; k<status.toArray().length; k++ ){
+						System.out.println( k +") "+"Status for user:" + status.toArray()[k]);
+					}
+					
 				}
 				catch(TwitterException e) {
 					System.out.println("Error for user JackBeIntel" + i + ": " + e.getErrorMessage());
