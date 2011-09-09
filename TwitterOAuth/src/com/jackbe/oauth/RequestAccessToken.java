@@ -57,12 +57,37 @@ public class RequestAccessToken {
 			e.printStackTrace();
 		}
 	}
+	
+	public static String printTwitterFeeds( String user){
+		
+		Twitter twitter = null;
+		twitter = new TwitterFactory().getInstance();
+		
+		ResponseList status;
+		
+		String sampleStatus = "";
+		try {
+			status = twitter.getUserTimeline( user );
+			for(int k = 0; k<status.toArray().length; k++ ){
+				System.out.println( k +") "+"Status for user:" + status.toArray()[k]);
+			}
+			sampleStatus = status.toArray()[0].toString();
+		} catch (TwitterException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return "Yes Twitter was called and return:"+ sampleStatus;
+	}
 
 	public static void main(String args[]) throws Exception {
 		Twitter twitter = null;
 		AccessToken accessToken = null;
-		// The factory instance is re-useable and thread safe.
-
+		
+		//String result = printTwitterFeeds("JackBeIntel3");
+		//System.out.println(result);
+		
+		
 		for (int i = 1; i < 4; i++) {
 			twitter = new TwitterFactory().getInstance();
 			if(i == 1)
@@ -119,6 +144,7 @@ public class RequestAccessToken {
 					for(int k = 0; k<status.toArray().length; k++ ){
 						System.out.println( k +") "+"Status for user:" + status.toArray()[k]);
 					}
+					System.out.println("=== Remaining Hits for this User: " + twitter.getRateLimitStatus().getRemainingHits());
 					
 				}
 				catch(TwitterException e) {
@@ -129,6 +155,7 @@ public class RequestAccessToken {
 			
 			accessToken = null;
 		}
+		
 	}
 
 }
