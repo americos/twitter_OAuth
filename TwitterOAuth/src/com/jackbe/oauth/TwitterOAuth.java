@@ -14,9 +14,13 @@ import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
 import twitter4j.auth.AccessToken;
 
+import oracle.net.aso.s;
+
 import org.apache.commons.lang.StringEscapeUtils;
 
 import com.jackbe.jbp.jems.client.EMMLUserFunction;
+
+import edu.emory.mathcs.backport.java.util.Arrays;
 
 
 
@@ -170,18 +174,46 @@ public class TwitterOAuth extends EMMLUserFunction {
 			List<Status> statuses = twitter.getUserTimeline(user);
 			//System.out.println("Showing " + user + " timeline.");
 
+			String created_at = "", time ="", year ="", temp="";
+			
+			
 			for (Status status2 : statuses) {
 
+				//Inserting comma for desired created_at format: Wed, Sep 14 11:14:16 EDT 2011
+				created_at = StringEscapeUtils.escapeXml(status2.getCreatedAt().toString());				
+				//created_at = new StringBuffer(created_at).insert(3, ",").toString();
+				//System.out.println("Created_at: " +  created_at);
+				
+				//twitter4J is returning the date as: Wed, Sep 14 11:14:16 EDT 2011
+												//	  Wed, Sep 14 2011 11:14:16 EDT 
+					//but the atom service has it as: Wed, 14 Sep 2011 15:14:16 +0000 
+					//for the sake of compability let's keep with the atom /Americo
+					String[] date_split = created_at.split(" ");
+					
+					time = date_split[3];
+					year = date_split[5];
+					temp = time;
+					date_split[3] = year;
+					date_split[5] = temp;				
+					
+					StringBuffer sb = new StringBuffer();
+					for(int i=0; i< date_split.length; i++){
+						//ignore positon 4 for EDT
+						if(i != 4){
+							sb.append(date_split[i]);
+							sb.append(" ");
+						}
+					}
+					sb.append("+0000");
+					created_at =  sb.toString();
+					
+				
 				 myItems.append("<item>");
 				 myItems.append("<entry>" + StringEscapeUtils.escapeXml(status2.getText()) + "</entry>");				 
 				 myItems.append("<source>" + "twitter" + "</source>");
-				 myItems.append("<created_time>" + StringEscapeUtils.escapeXml(status2.getCreatedAt().toString())
-						 + "</created_time>");
-				 myItems.append("<link>" + StringEscapeUtils.escapeXml("http://twitter.com/#!/" + user +
-						 "/statuses/"
-						 + status2.getId()) + "</link>");
-				 myItems.append("<timestamp>" + StringEscapeUtils.escapeXml(status2.getCreatedAt().toString()) +
-						 "</timestamp>");
+				 myItems.append("<created_time>" + created_at + "</created_time>");
+				 myItems.append("<link>" + StringEscapeUtils.escapeXml("http://twitter.com/#!/" + user + "/statuses/" + status2.getId()) + "</link>");
+				 myItems.append("<timestamp>" + StringEscapeUtils.escapeXml(status2.getCreatedAt().toString()) +"</timestamp>");
 				 myItems.append("</item>");
 			}
 		} catch (Exception e) {
