@@ -44,6 +44,8 @@ public class TwitterOAuth extends EMMLUserFunction {
 	private static String initialUserId;
 	private static int finalUserIndex;
 	private static String path;
+	
+	private static int hitsRemaining;
 
 	public static void initialize() throws Exception {
 		path= Thread.currentThread().getContextClassLoader().getResource(filename).getPath();
@@ -139,6 +141,9 @@ public class TwitterOAuth extends EMMLUserFunction {
 			twitter = new TwitterFactory().getInstance();
 			return loadAccessToken(finalUserIndex + 1);
 		}
+		
+		hitsRemaining = twitter.getRateLimitStatus().getRemainingHits();
+		
 		return accessToken;
 	}
 
@@ -207,6 +212,7 @@ public class TwitterOAuth extends EMMLUserFunction {
 					sb.append("+0000");
 					created_at =  sb.toString();
 					
+					//System.out.println("hits:" + hitsRemaining);
 				
 				 myItems.append("<item>");
 				 myItems.append("<entry>" + StringEscapeUtils.escapeXml(status2.getText()) + "</entry>");				 
@@ -214,6 +220,8 @@ public class TwitterOAuth extends EMMLUserFunction {
 				 myItems.append("<created_time>" + created_at + "</created_time>");
 				 myItems.append("<link>" + StringEscapeUtils.escapeXml("http://twitter.com/#!/" + user + "/statuses/" + status2.getId()) + "</link>");
 				 myItems.append("<timestamp>" + StringEscapeUtils.escapeXml(status2.getCreatedAt().toString()) +"</timestamp>");
+				 
+				 myItems.append("<twitter_user_hits>" + initialUserId + "," + hitsRemaining + "</twitter_user_hits>");
 				 myItems.append("</item>");
 			}
 		} catch (Exception e) {
@@ -228,7 +236,7 @@ public class TwitterOAuth extends EMMLUserFunction {
 	public static void main(String[] args) throws Exception {
 
 		// Printing my Tweets!
-		for (int i = 0; i < 1; i++) {
+		for (int i = 0; i < 2; i++) {
 			System.out.println(TwitterOAuth.printTwitterFeeds("americos"));
 		}
 
