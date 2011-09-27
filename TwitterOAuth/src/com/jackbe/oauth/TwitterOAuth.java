@@ -179,11 +179,18 @@ public class TwitterOAuth extends EMMLUserFunction {
 			List<Status> statuses = twitter.getUserTimeline(user);
 			//System.out.println("Showing " + user + " timeline.");
 
-			String created_at = "", time ="", year ="", temp="";
-			
+			String created_at = "", time ="", year ="", temp="", user_id="", tweet_id="";
+			String twitter_intent = "https://twitter.com/intent/"; //use for creating the retweet, follow, etc.
 			
 			for (Status status2 : statuses) {
 
+				//System.out.println(" == Status: " +status2.toString());
+				user_id = status2.getUser().getId() + "";
+				tweet_id = status2.getId() + "";
+				
+				//System.out.println(" == User: " + user_id);
+				//System.out.println("== Tweet id: " + tweet_id);
+				
 				//Inserting comma for desired created_at format: Wed, Sep 14 11:14:16 EDT 2011
 				created_at = StringEscapeUtils.escapeXml(status2.getCreatedAt().toString());				
 				//created_at = new StringBuffer(created_at).insert(3, ",").toString();
@@ -213,6 +220,7 @@ public class TwitterOAuth extends EMMLUserFunction {
 					created_at =  sb.toString();
 					
 					//System.out.println("hits:" + hitsRemaining);
+					
 				
 				 myItems.append("<item>");
 				 myItems.append("<entry>" + StringEscapeUtils.escapeXml(status2.getText()) + "</entry>");				 
@@ -222,6 +230,9 @@ public class TwitterOAuth extends EMMLUserFunction {
 				 myItems.append("<timestamp>" + StringEscapeUtils.escapeXml(status2.getCreatedAt().toString()) +"</timestamp>");
 				 
 				 myItems.append("<twitter_user_hits>" + initialUserId + "," + hitsRemaining + "</twitter_user_hits>");
+				 //myItems.append("<twitter_tweet>" + twitter_intent + "tweet?in"+ "</twitter_tweet>")
+				 myItems.append("<twitter_user>" + user_id +"</twitter_user>");
+				 myItems.append("<twitter_id>" + tweet_id +"</twitter_id>");
 				 myItems.append("</item>");
 			}
 		} catch (Exception e) {
