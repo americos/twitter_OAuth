@@ -184,7 +184,7 @@ public class TwitterOAuth extends EMMLUserFunction {
 			
 			for (Status status2 : statuses) {
 
-				//System.out.println(" == Status: " +status2.toString());
+				System.out.println(" == Status: " +status2.toString());
 				user_id = status2.getUser().getId() + "";
 				tweet_id = status2.getId() + "";
 				
